@@ -1,0 +1,104 @@
+PLANO DO RELATÓRIO ANUAL / MESES SELECIONADOS
+Referência: g4freports v1.8.22. Data: 23/10/2026.
+
+Complemento 1.8.23: a coleção foi redesenhada com tendências mensais, síntese, volumes, tempos, custos e mapas diários preparados a partir da evidência arquivada. A preparação do detalhe diário é limitada, uma revisão por solicitação, com admissão global entre usuários; preview/exportação leem apenas projeções compactas. Esta alteração não implementa os marcos de extração/SQL pendentes descritos abaixo e não muda consultas, indicadores nem o relatório mensal.
+
+Escopo desta entrega
+
+Os marcos 1 e 2 estão implementados na 1.8.22: arquivamento explícito do mês conferido e coleção das versões selecionadas, sem novas extrações. Os marcos 3 e 4 continuam pendentes: fila compartilhada, worker, geração de meses ausentes, índices e otimização SQL. O núcleo de seleção e cálculo mensal permanece inalterado. Os metadados fornecidos ajudam a orientar a próxima etapa, mas não substituem planos das consultas reais nem medições de carga.
+
+Decisões implementadas: armazenamento em GLPI_PLUGIN_DOC_DIR/g4freports/monthly_archive, sem fallback temporário; revisões por proprietário; publicação atômica e bloqueio curto por proprietário/competência; evidência e resumo separados; versões escolhidas explicitamente; máximo de 24 competências, 50 revisões por proprietário/mês, 64 MiB de evidência e 1 MiB de resumo por revisão. Repetir o conteúdo exato reutiliza a revisão. Não há compartilhamento, exclusão automática nem cota global: backup, espaço e armazenamento compartilhado entre servidores PHP são responsabilidades de implantação. Veja README.md e VALIDACAO_1.8.22.md.
+
+Evidência SQL já recebida
+
+- GLPI/MariaDB 10.11.18: cerca de 292 mil chamados e 33,84 milhões de logs, com índices existentes para itens, solução e associações. Callcenter/MySQL 8.0.46: cerca de 12,25 milhões de eventos e 86 mil pesquisas; a pesquisa possui somente sua chave primária. Os volumes são estimativas de metadados, não contagens exatas.
+- As 23 tabelas esperadas usam InnoDB. O campo temporal de queue_log é CHAR(26); callid e o identificador das pesquisas diferem em conjunto de caracteres. Conversões e limites de data precisam ser verificados no plano real.
+- Paginar pesquisas ingenuamente pode repetir a varredura da tabela a cada lote. LIMIT externo a um ranking/CTE pode repetir a ordenação de toda a população mensal. Nenhuma dessas propostas deve ser liberada como otimização apenas por reduzir as linhas retornadas.
+- O isolamento observado na sessão de diagnóstico não comprova o isolamento das conexões PHP do plugin. A conexão por consulta atual não mantém uma visão mensal única. Timeout de leitura da rede não equivale a limite de duração total de uma instrução SQL.
+- Pendências concretas: EXPLAIN das consultas reais com filtros representativos de meses volumosos e de páginas posteriores; configurações efetivas de conexão/isolamento/fuso/limites no plugin; topologia dos processos PHP; agendador disponível e política de cancelamento/tempo máximo. Alteração de índices continua separada, revisada pelo responsável pelo banco.
+
+O relatório pretendido
+
+O anual é uma coleção de resultados mensais que mostra a evolução dos indicadores e dos custos. Reutiliza cada competência e mantém as regras do relatório mensal; não cria indicadores anuais.
+
+- Selecionar um ano ou meses específicos, remover repetições e ordenar cronologicamente.
+- Mostrar INS1–INS12, resultado, meta, situação, volumes/cobertura e comentários de cada mês, com tabelas, gráficos e diferenças em pontos percentuais.
+- INS5, INS9 e INS10 melhoram quando diminuem; os demais, quando aumentam. O cumprimento continua dependendo da meta e da direção de cada apuração.
+- Entre meses não consecutivos, identificar a comparação com o último mês selecionado. Ausente, pendente, provisório ou não aplicável conserva sua situação; não vira zero nem aprovação.
+- Mostrar bruto, glosas, ajustes e líquido mensais. Somar os valores monetários já arredondados em centavos. Identificar subtotal e cobertura quando faltarem meses ou o financeiro estiver incompleto.
+- Não calcular percentual anual dos indicadores, média anual de percentuais, nova taxa anual de rotatividade ou glosa baseada em taxa anual. TMA/TME também permanecem mensais.
+- Descrever variações sem inventar causas. Justificativas e ações vêm dos comentários registrados.
+
+Mudanças de profissionais, valores, dias faturados e ajustes entre meses são esperadas. Cada resultado preserva os valores usados em sua geração. Não é necessário criar um sistema de valores históricos do pessoal ou um novo fluxo de aprovação.
+
+Marco 1 — Arquivar o resultado mensal conferido
+
+O SnapshotStore atual guarda rascunhos do usuário por 24 horas e permite alterar a narrativa. Aumentar somente o prazo não cria um arquivo confiável.
+
+Ao arquivar, copiar exatamente o snapshot conferido, incluindo narrativa, entradas, indicadores e financeiro. Não consultar novamente as fontes nem recalcular com configurações recentes. Cada arquivamento produz revisão imutável; correções posteriores produzem outra revisão.
+
+Guardar o detalhamento em área durável e não pública, com backup, índice e resumo mensal compacto. Não carregar doze bases completas de chamados/ligações para obter seus indicadores, nem armazenar grandes snapshots em glpi_configs. Definir retenção/exclusão sem reutilizar a limpeza dos rascunhos. Em instalações com vários servidores PHP, confirmar armazenamento persistente compartilhado. Proteger gravações e atualizações concorrentes do índice.
+
+Manter inicialmente o acesso por proprietário, além da permissão atual de uso do módulo, em listagem, leitura e exportação. Compartilhamento entre usuários é decisão separada; não decorre da permissão para abrir o módulo.
+
+Proveniência mínima: competência, intervalo/fuso, data da geração, versão de esquema/regras/plugin, identidade não secreta das fontes, parâmetros relevantes e revisão. Preservar os cadastros e ajustes usados no snapshot, sem credenciais. Registrar início/fim das leituras por fonte quando esse controle for acrescentado.
+
+Um mês antigo gerado hoje usa o estado atual das fontes e os valores salvos usados nessa geração. Mostrar sua data real, sem afirmar que recuperou um relatório antigo. As dez revisões de recuperação dos cadastros não substituem resultados mensais arquivados. Dados históricos ausentes não devem ser inventados.
+
+Marco 2 — Exportar a coleção arquivada
+
+A exportação lê somente os resumos arquivados, sem consultas operacionais ao GLPI ou Asterisk. Pode preceder a geração em lote, desde que os meses ausentes continuem explicitamente ausentes.
+
+Fixar os identificadores das revisões selecionadas antes de exportar: uma atualização concorrente não pode trocar um mês no meio do documento. Identificar a revisão utilizada e permitir versões anteriores. Meses abertos podem aparecer como provisórios. Término do mês, conclusão da extração e completude financeira são condições distintas; tentativa falha não substitui revisão válida.
+
+Mudanças normais de equipe/custo não tornam a coleção incompatível. Sinalizar no indicador afetado alterações relevantes de definição, população ou fonte, como mapeamento de prioridade, modo INS11 ou fontes INS12. Preservar a meta da competência e separar resultado técnico de decisão financeira.
+
+Criar leitura/exportação compatível com as versões arquivadas. O bloqueio atual de rascunhos com regras antigas não pode obrigar a recalcular um mês arquivado para visualizá-lo. Esquema não suportado deve gerar mensagem explícita, sem reinterpretar valores.
+
+Marco 3 — Uma fila para toda geração mensal
+
+Só após validar a execução controlada, oferecer ação explícita para gerar meses ausentes ou atualizar selecionados. Usar a mesma fila das gerações mensais comuns; trava exclusiva do anual deixaria outros pedidos concorrendo nas mesmas bases.
+
+Processar uma extração pesada por vez por fonte compartilhada, adquirindo bloqueios em ordem estável. Não ampliar o período para um ano nem disparar doze meses em paralelo. Congelar os parâmetros do pedido, validar a identidade das fontes e preparar entradas específicas por mês; não copiar comentários e decisões de uma competência para todas.
+
+Manter estado persistente, idempotência, progresso por mês, tentativas limitadas e verificação de propriedade antes da publicação. Reaproveitar meses concluídos; resultado incompleto não substitui revisão válida.
+
+Lease/heartbeat detecta perda de atividade, mas não cancela SQL. Lease expirada não autoriza outro trabalhador sobre a mesma fonte enquanto o anterior ainda puder estar executando. Timeout do navegador também não comprova interrupção no servidor. Cancelamento entre etapas seguras exige limites de execução e encerramento confirmado das consultas.
+
+Após queda, reiniciar a competência incompleta com nova extração, descartando fragmentos não publicados. Não acrescentar páginas novas às antigas, lidas de outra visão mutável das bases. Retomada dentro do mês só será aceitável com mecanismo explícito que preserve a mesma evidência; o código atual não oferece essa garantia.
+
+Escolher tarefa nativa do GLPI ou CLI pelo agendador existente, conforme o ambiente. Não criar cron improvisado no navegador, depender de aba aberta ou tratar barra de progresso como worker. O pacote atual não instala esse mecanismo.
+
+Marco 4 — Lotes e limites SQL com equivalência comprovada
+
+Antes de escolher sintaxe, índices ou lotes, completar os dados de GLPI/PHP, planos mensais e infraestrutura do agendador usando os motores, versões, esquemas, índices e volumes já fornecidos. Usar EXPLAIN apropriado; EXPLAIN ANALYZE executa a consulta e não é inspeção sem carga. Não criar índices nem executar DDL automaticamente nas fontes.
+
+Limite de linhas retornadas não limita todo o trabalho de joins, ordenações e funções de janela. Combinar limites de execução compatíveis com o motor, lotes por chaves estáveis e orçamento cumulativo de linhas, consultas, duração e memória por extração. Limites por lote não podem multiplicar silenciosamente o limite total. Exceder orçamento deve interromper a geração sem publicar resultado truncado.
+
+Cuidados obrigatórios:
+
+- Fixar IDs mensais e carregar associações em lotes, preservando históricos necessários anteriores ao mês. Manter chamados por data de solução e ligações por entrada na fila, com início inclusivo e fim exclusivo.
+- Preservar eventos que concluem uma ligação depois da virada do mês. Não acrescentar corte arbitrário de data para baratear essa leitura.
+- Manter callid + fila, primeira entrada do mês, desempates, primeira conclusão e seleção da pesquisa. Calcular rankings sobre toda a população pertinente de cada chave ANTES de paginar resultados; não recalcular rankings em páginas parciais de eventos/respostas.
+- Resolver nota versus atendimento uma vez sobre TODA a população mensal das filas selecionadas, ANTES das exclusões de números de teste, como no Calculator atual. Não resolver por página, sobre o ano agrupado ou depois das exclusões. Preservar uma pesquisa por ligação e suas regras de seleção.
+- Manter o filtro atual de filas até comprovar equivalência de uma alternativa por igualdade.
+- Não prometer consistência transacional entre duas bases independentes nem abrir uma transação de ano inteiro. Reutilização de conexão e cache precisam de escopo, limites e verificação próprios.
+
+INS10 permanece mensal: saídas incluídas no mês e nos dois anteriores divididas pelos profissionais com dias faturados, inclusive proporcionais; Não Faturar conserva seu significado. Janeiro pode depender de novembro/dezembro. A coleção não soma essas janelas.
+
+Compatibilidade das correções de persistência
+
+Salvar cadastro/histórico usa a conexão nativa do GLPI, distinta das conexões somente leitura das fontes. GLPI 10 e 11 diferem em API, retornos e transações aninhadas. No GLPI 10, outra transação não pode confirmar implicitamente trabalho do chamador; no GLPI 11, respeitar os mecanismos nativos e savepoints. Verificar início, gravação, confirmação e falha nos dois comportamentos. Rollback não deve mascarar erro original; liberar lock não confirma salvamento. Evitar SQL direto por APIs proibidas no GLPI 11. Correções de integridade não equivalem a otimização das consultas operacionais.
+
+Critérios de liberação
+
+1. Arquivar exatamente o resultado conferido; alterações posteriores de valores, cadastros e narrativas não modificam revisões anteriores.
+2. Exportar com clientes das fontes desabilitados; testar meses ausentes, abertos, incompletos, não consecutivos, versões antigas e atualização concorrente.
+3. Conferir pontos percentuais, direção das metas e somas em centavos; não produzir KPI anual ou total completo com meses faltantes.
+4. Testar concorrência, perda de trabalhador, lease expirada com SQL ativo, cancelamento e repetição; impedir duplicação e publicação parcial.
+5. Comparar consultas antigas/novas por seleção, evidências, indicadores e financeiro: virada do mês, retornos à fila, múltiplas pesquisas, histórico anterior e satisfação mensal antes das exclusões.
+6. Verificar persistência no GLPI 10/11, inclusive falhas de gravação/confirmação. Medir carga real antes de declarar ganho.
+
+Sequência decidida
+
+Correções pontuais foram entregues na 1.8.21; arquivo durável e coleção somente de leitura são entregues na 1.8.22. Geração de meses ausentes depende da fila compartilhada e das proteções SQL verificadas. Não alegar menor custo das consultas mensais nem segurança de três extrações concorrentes antes de medir a carga no ambiente representativo. A validação de homologação da 1.8.22 cobre também permissões/backup, persistência entre reinícios e, quando aplicável, armazenamento comum aos processos PHP.

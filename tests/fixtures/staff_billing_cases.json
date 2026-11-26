@@ -1,0 +1,852 @@
+[
+  {
+    "label": "full-june",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "30.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "join-midmonth",
+    "month": "2026-06",
+    "row": {
+      "id": "join-midmonth",
+      "name": "join-midmonth",
+      "profile": "Técnico",
+      "admission_date": "2026-06-16",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-16",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 15,
+      "billed_value": "15.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 15
+    }
+  },
+  {
+    "label": "leave-second",
+    "month": "2026-06",
+    "row": {
+      "id": "leave-second",
+      "name": "leave-second",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-06-02",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-02",
+      "billed_days": 2,
+      "billed_value": "2.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 2
+    }
+  },
+  {
+    "label": "three-days",
+    "month": "2026-06",
+    "row": {
+      "id": "three-days",
+      "name": "three-days",
+      "profile": "Técnico",
+      "admission_date": "2026-06-10",
+      "departure_date": "2026-06-12",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-10",
+      "billing_last_day": "2026-06-12",
+      "billed_days": 3,
+      "billed_value": "3.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 3
+    }
+  },
+  {
+    "label": "same-day",
+    "month": "2026-06",
+    "row": {
+      "id": "same-day",
+      "name": "same-day",
+      "profile": "Técnico",
+      "admission_date": "2026-06-05",
+      "departure_date": "2026-06-05",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-05",
+      "billing_last_day": "2026-06-05",
+      "billed_days": 1,
+      "billed_value": "1.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 1
+    }
+  },
+  {
+    "label": "future-admission",
+    "month": "2026-06",
+    "row": {
+      "id": "future-admission",
+      "name": "future-admission",
+      "profile": "Técnico",
+      "admission_date": "2026-07-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 0
+    }
+  },
+  {
+    "label": "prior-exit",
+    "month": "2026-06",
+    "row": {
+      "id": "prior-exit",
+      "name": "prior-exit",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-05-31",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 0
+    }
+  },
+  {
+    "label": "future-exit-historical",
+    "month": "2026-06",
+    "row": {
+      "id": "future-exit-historical",
+      "name": "future-exit-historical",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-09-01",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "30.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "leap-february",
+    "month": "2024-02",
+    "row": {
+      "id": "leap-february",
+      "name": "leap-february",
+      "profile": "Técnico",
+      "admission_date": "2020-01-01",
+      "departure_date": "",
+      "monthly_value": 2900,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2024-02-01",
+      "billing_last_day": "2024-02-29",
+      "billed_days": 29,
+      "billed_value": "2900.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 29
+    }
+  },
+  {
+    "label": "nonleap-february",
+    "month": "2026-02",
+    "row": {
+      "id": "nonleap-february",
+      "name": "nonleap-february",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-02-14",
+      "monthly_value": 2800,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-02-01",
+      "billing_last_day": "2026-02-14",
+      "billed_days": 14,
+      "billed_value": "1400.00",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 14
+    }
+  },
+  {
+    "label": "thirtyone",
+    "month": "2026-07",
+    "row": {
+      "id": "thirtyone",
+      "name": "thirtyone",
+      "profile": "Técnico",
+      "admission_date": "2026-07-31",
+      "departure_date": "",
+      "monthly_value": 3100,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-07-31",
+      "billing_last_day": "2026-07-31",
+      "billed_days": 1,
+      "billed_value": "100.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 1
+    }
+  },
+  {
+    "label": "cent-rounding",
+    "month": "2026-07",
+    "row": {
+      "id": "cent-rounding",
+      "name": "cent-rounding",
+      "profile": "Técnico",
+      "admission_date": "2026-07-01",
+      "departure_date": "2026-07-03",
+      "monthly_value": 100,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-07-01",
+      "billing_last_day": "2026-07-03",
+      "billed_days": 3,
+      "billed_value": "9.68",
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 3
+    }
+  },
+  {
+    "label": "half-cent",
+    "month": "2026-06",
+    "row": {
+      "id": "half-cent",
+      "name": "half-cent",
+      "profile": "Técnico",
+      "admission_date": "2026-06-30",
+      "departure_date": "",
+      "monthly_value": "0.15",
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-30",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 1,
+      "billed_value": "0.01",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 1
+    }
+  },
+  {
+    "label": "brazilian-money",
+    "month": "2026-06",
+    "row": {
+      "id": "brazilian-money",
+      "name": "brazilian-money",
+      "profile": "Técnico",
+      "admission_date": "2026-06-28",
+      "departure_date": "",
+      "monthly_value": "R$ 5.980,99",
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-28",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 3,
+      "billed_value": "598.10",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 3
+    }
+  },
+  {
+    "label": "maximum-value",
+    "month": "2026-06",
+    "row": {
+      "id": "maximum-value",
+      "name": "maximum-value",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": "99999999.99",
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "99999999.99",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "zero-salary",
+    "month": "2026-06",
+    "row": {
+      "id": "zero-salary",
+      "name": "zero-salary",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 0,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "excluded",
+    "month": "2026-06",
+    "row": {
+      "id": "excluded",
+      "name": "excluded",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": true
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "excluded-incomplete",
+    "month": "2026-06",
+    "row": {
+      "id": "excluded-incomplete",
+      "name": "excluded-incomplete",
+      "profile": "Técnico",
+      "admission_date": "",
+      "departure_date": "",
+      "monthly_value": "",
+      "not_billed": true
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "invalid-month",
+    "month": "2026-13",
+    "row": {
+      "id": "invalid-month",
+      "name": "invalid-month",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "invalid-month-excluded",
+    "month": "",
+    "row": {
+      "id": "invalid-month-excluded",
+      "name": "invalid-month-excluded",
+      "profile": "Técnico",
+      "admission_date": "",
+      "departure_date": "",
+      "monthly_value": "",
+      "not_billed": true
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "invalid-admission",
+    "month": "2026-06",
+    "row": {
+      "id": "invalid-admission",
+      "name": "invalid-admission",
+      "profile": "Técnico",
+      "admission_date": "2026-02-30",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "incomplete-admission",
+    "month": "2026-06",
+    "row": {
+      "id": "incomplete-admission",
+      "name": "incomplete-admission",
+      "profile": "Técnico",
+      "admission_date": "",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "invalid-exit",
+    "month": "2026-06",
+    "row": {
+      "id": "invalid-exit",
+      "name": "invalid-exit",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-02-30",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "reversed-dates",
+    "month": "2026-06",
+    "row": {
+      "id": "reversed-dates",
+      "name": "reversed-dates",
+      "profile": "Técnico",
+      "admission_date": "2026-06-20",
+      "departure_date": "2026-06-02",
+      "monthly_value": 30,
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Inativo",
+      "billed_days_override": null,
+      "automatic_billed_days": null
+    }
+  },
+  {
+    "label": "invalid-money",
+    "month": "2026-06",
+    "row": {
+      "id": "invalid-money",
+      "name": "invalid-money",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": "incompleto",
+      "not_billed": false
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-june",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": 22
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 22,
+      "billed_value": "22.00",
+      "status": "Ativo",
+      "billed_days_override": 22,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-zero",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": 0
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": 0,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-other-month",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-07": 2
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "30.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-empty",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": ""
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "30.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-null",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": null
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-30",
+      "billed_days": 30,
+      "billed_value": "30.00",
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "invalid-manual-overlap",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": 31
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "invalid-manual-negative",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": -1
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "invalid-manual-fractional",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": 1.5
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "invalid-manual-bool",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": true
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "invalid-manual-exponent",
+    "month": "2026-06",
+    "row": {
+      "id": "full-june",
+      "name": "full-june",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": "1e1"
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": null,
+      "billed_value": null,
+      "status": "Ativo",
+      "billed_days_override": null,
+      "automatic_billed_days": 30
+    }
+  },
+  {
+    "label": "manual-partial-departure",
+    "month": "2026-06",
+    "row": {
+      "id": "leave-second",
+      "name": "leave-second",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "2026-06-02",
+      "monthly_value": 30,
+      "not_billed": false,
+      "billing_days_overrides": {
+        "2026-06": 1
+      }
+    },
+    "expected": {
+      "billing_first_day": "2026-06-01",
+      "billing_last_day": "2026-06-02",
+      "billed_days": 1,
+      "billed_value": "1.00",
+      "status": "Inativo",
+      "billed_days_override": 1,
+      "automatic_billed_days": 2
+    }
+  },
+  {
+    "label": "excluded-manual-preserved",
+    "month": "2026-06",
+    "row": {
+      "id": "excluded",
+      "name": "excluded",
+      "profile": "Técnico",
+      "admission_date": "2025-01-01",
+      "departure_date": "",
+      "monthly_value": 30,
+      "not_billed": true,
+      "billing_days_overrides": {
+        "2026-06": 22
+      }
+    },
+    "expected": {
+      "billing_first_day": null,
+      "billing_last_day": null,
+      "billed_days": 0,
+      "billed_value": "0.00",
+      "status": "Ativo",
+      "billed_days_override": 22,
+      "automatic_billed_days": 30
+    }
+  }
+]

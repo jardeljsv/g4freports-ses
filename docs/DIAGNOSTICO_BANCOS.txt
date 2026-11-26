@@ -1,0 +1,94 @@
+DIAGNOSTICO DE METADADOS DAS FONTES SES
+
+Objetivo
+
+Coletar versao, motor das tabelas, tipos das colunas, indices e algumas
+variaveis da sessao para preparar uma revisao de consultas baseada no ambiente
+real. Os scripts nao executam a extracao mensal, nao calculam indicadores e
+nao certificam desempenho, capacidade para tres usuarios ou ausencia de impacto.
+
+Os scripts contêm apenas SELECT de metadados e SHOW de uma lista fixa de
+variaveis. Nao incluem COUNT de tabelas operacionais, EXPLAIN, ANALYZE, DDL,
+alteracoes de dados, SET GLOBAL, credenciais ou IDs de entidades presumidos.
+Consultas de metadados tambem usam recursos do servidor; os limites de linhas
+limitam a resposta, nao constituem um teto de trabalho ou tempo no servidor.
+
+Como coletar
+
+1. Na conexao GLPI, selecione explicitamente o banco configurado no plugin e
+   use diagnostico_glpi.sql. Na conexao Callcenter, selecione o banco configurado
+   para essa fonte e use diagnostico_callcenter.sql. Nao execute os dois scripts
+   sobre um mesmo banco apenas por conveniencia.
+2. Use a conta de leitura configurada para a respectiva fonte, quando possivel.
+   Se precisar de outra conta, informe essa diferenca; metadados visiveis podem
+   mudar conforme os privilegios. Nao envie senhas, arquivos de conexao ou URLs
+   contendo credenciais.
+3. Execute a primeira consulta de cada script separadamente. Se
+   selected_database for NULL ou indicar outro banco, pare e corrija a selecao
+   antes de executar as demais consultas. O script nao escolhe nem troca bancos.
+4. Execute as demais consultas e preserve os cinco resultados por fonte,
+   incluindo colunas, nomes de variaveis e mensagens de erro. Exporte como texto
+   ou CSV, identificando fonte e numero da consulta. Confirme que o cliente nao
+   cortou os resultados por seu proprio limite de linhas. Nao substitua erros
+   ou tabelas ausentes por resultados vazios sem indicar a ocorrencia.
+5. Informe a data da coleta e se a sessao foi aberta no servidor GLPI ou em
+   outro computador. Uma sessao DBeaver, por exemplo, nao comprova conectividade,
+   driver, variaveis de sessao ou permissoes efetivas do processo PHP do GLPI.
+   O teste do plugin deve ser usado para verificar a conexao a partir dele.
+
+Limites e interpretacao
+
+- O inventario GLPI usa uma lista fixa de 21 tabelas referenciadas por
+  Repository, ActorEvidence, SelectionCatalog e SlaDataSource. O inventario
+  Callcenter usa somente queue_log e tab_pesquisa. Nenhuma tabela operacional
+  e lida para obter valores de chamados, nomes de pessoas, telefones ou notas.
+- As consultas de colunas e indices do GLPI retornam no maximo 2001 linhas.
+  As equivalentes do Callcenter retornam no maximo 257 linhas. A ultima linha
+  e uma sentinela: se o resultado atingir exatamente esse limite, marque-o
+  como possivelmente incompleto. Nao aumente o limite nem remova o filtro
+  automaticamente; sera necessario definir uma coleta adicional limitada.
+- As consultas de tabelas estao limitadas naturalmente aos 21 ou dois nomes
+  permitidos e usam sentinelas de 22 e tres linhas, respectivamente.
+- SHOW consulta dez nomes de variaveis, portanto retorna no maximo dez linhas.
+  Algumas variaveis existem apenas em determinadas versoes/motores. Ausencia
+  nao significa valor zero. SHOW nao oferece ORDER BY portavel entre os motores;
+  esse pequeno resultado pode ser ordenado por Variable_name no cliente.
+- As demais listagens tem ordenacao explicita e deterministica. Uma linha de
+  indice representa uma de suas colunas, nao um indice inteiro.
+- TABLE_ROWS e CARDINALITY sao estimativas. Nao executar COUNT(*) ou atualizar
+  estatisticas apenas para tornar este inventario mais preciso. COLUMN_NAME
+  NULL em um indice pode exigir verificacao especifica do tipo de indice.
+- Metadados ausentes podem decorrer de permissao ou de estrutura diferente.
+  A presenca de uma tabela ou indice nao prova que toda a extracao tenha acesso
+  a seus dados, nem que o otimizador usara o indice da maneira esperada.
+- ENGINE informa se uma futura estrategia de snapshot consistente precisa de
+  verificacao adicional. READ ONLY nao transforma tabelas nao transacionais em
+  transacionais e nao cria um snapshot atomico entre os dois bancos.
+- Os fusos coletados descrevem esta sessao. Tipo DATETIME nao informa se seus
+  valores foram gravados em horario local ou UTC. TIMESTAMP depende da sessao
+  para conversao. E necessario confirmar a origem desses valores e o fuso
+  efetivamente usado pelo PHP, especialmente nas fronteiras de competencias.
+- max_execution_time e max_statement_time nao sao intercambiaveis. A primeira
+  variavel usa milissegundos no MySQL; a segunda usa segundos no MariaDB. Esta
+  coleta somente observa valores e nao altera nenhum limite.
+
+Etapa posterior
+
+Com esses resultados, preparar EXPLAIN das consultas reais, com os mesmos
+parametros, filtros e regras usados na competencia escolhida. Nao substituir
+o trabalho por consultas com LIMIT 0 ou IDs inventados. EXPLAIN comum fornece
+estimativas; MySQL EXPLAIN ANALYZE e MariaDB ANALYZE executam as consultas e
+exigem uma etapa de medicao controlada, separada deste inventario.
+
+A revisao deve preservar grupos, categorias, datas de solucao, vinculos, ciclos
+de reabertura, primeiro ENTERQUEUE por ligacao/fila no mes, eventos posteriores
+ao fim do mes e selecao das pesquisas. Na implementacao atual, a escolha da
+regra de nota telefonica considera o recorte mensal completo antes da exclusao
+dos numeros de teste; paginacao ou processamento em lotes nao pode mudar essa
+ordem. O inventario nao altera essas regras e nao inclui reescrita de consultas.
+
+Antes de ativar uma fila, confirmar tambem quem executara os trabalhos, como
+sera iniciado/monitorado o worker, como ficara o armazenamento em ambiente com
+mais de um servidor, quais contas poderao ler resultados e como uma consulta
+sera encerrada antes de liberar sua vaga. Esses fatos nao podem ser deduzidos
+somente das consultas de metadados.
