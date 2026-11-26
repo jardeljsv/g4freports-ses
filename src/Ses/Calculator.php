@@ -555,6 +555,7 @@ class Calculator
             ],
         ];
         $snapshot['financial'] = FinancialSummary::build($snapshot);
+        $snapshot['severity_review'] = SeverityReview::build($snapshot, $slaContext);
         return $snapshot;
     }
 
