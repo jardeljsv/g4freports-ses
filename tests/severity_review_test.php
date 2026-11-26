@@ -4,7 +4,7 @@ require_once dirname(__DIR__) . '/inc/autoload.php';
 use GlpiPlugin\G4freports\Ses\SeverityReview;
 use GlpiPlugin\G4freports\Ses\MonthlyExport;
 use GlpiPlugin\G4freports\Ses\Monthly\V1\Profile;
-use GlpiPlugin\G4freports\Ses\Monthly\V2\DocxExporter;
+use GlpiPlugin\G4freports\Ses\Monthly\V3\DocxExporter;
 
 function reviewCheck($condition, string $message): void {
     if (!$condition) throw new RuntimeException($message);
@@ -45,12 +45,22 @@ foreach ($s['metrics'] as $i=>$m) {
     $xml=$method->invoke($word,$m,$s);
     reviewCheck(strpos($xml,'50,00%')!==false,'Correct simulation');
     reviewCheck(strpos($xml,'Severidade '.($i+1))!==false,'Correct severity');
+    reviewCheck(strpos($xml,'foi encaminhado')!==false,'Singular transfer');
+    reviewCheck(strpos($xml,'Caso seja desconsiderado o registro apontado')!==false,'Singular simulation');
+    reviewCheck(strpos($xml,'<w:b/>')!==false && strpos($xml,'•')!==false,'Bold and bullet evidence');
 }
+$met = $s['metrics'][0]; $met['value']=97.95; $met['numerator']=5399; $met['denominator']=5512; $met['status']='met';
+$s['financial']['deductions']=[['id'=>'INS1','amount'=>'0.00']];
+$xml=$method->invoke($word,$met,$s);
+reviewCheck(strpos($xml,'não há incidência de glosa')!==false,'No deduction when met');
+reviewCheck(strpos($xml,'eventual alteração da glosa')===false,'No financial contest when met');
+$old = $s; $old['monthly_export']=['profile'=>'ses-monthly-v2'];
+reviewCheck(MonthlyExport::profile($old)==='ses-monthly-v2','RC1 profile preserved');
 $empty = $s['metrics'][0]; $empty['denominator']=1; $empty['numerator']=0; $empty['value']=0;
 reviewCheck(strpos($method->invoke($word,$empty,$s),'N/A')!==false,'Zero revised denominator');
 $without = SeverityReview::build($s,['history_available'=>false]);
 reviewCheck(!$without['INS1']['history_available'] && !$without['INS1']['candidates'],'Unavailable history is not inferred');
 $legacy = $s; unset($legacy['severity_review']);
 reviewCheck(MonthlyExport::profile(MonthlyExport::stamp($legacy))===Profile::ID,'Legacy profile stays V1');
-reviewCheck(MonthlyExport::profile(MonthlyExport::stamp($s))==='ses-monthly-v2','New snapshots use V2');
+reviewCheck(MonthlyExport::profile(MonthlyExport::stamp($s))==='ses-monthly-v3','New snapshots use V3');
 echo "Severity review tests OK\n";
