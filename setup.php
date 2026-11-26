@@ -6,7 +6,7 @@ require_once __DIR__ . '/inc/common.php';
 require_once __DIR__ . '/inc/menu.class.php';
 require_once __DIR__ . '/inc/config.class.php';
 
-if (!defined('PLUGIN_G4FREPORTS_VERSION')) { define('PLUGIN_G4FREPORTS_VERSION', '1.8.24'); }
+if (!defined('PLUGIN_G4FREPORTS_VERSION')) { define('PLUGIN_G4FREPORTS_VERSION', '1.8.25-rc1'); }
 if (!defined('PLUGIN_G4FREPORTS_MIN_GLPI')) { define('PLUGIN_G4FREPORTS_MIN_GLPI', '10.0.0'); }
 
 function plugin_init_g4freports(): void
