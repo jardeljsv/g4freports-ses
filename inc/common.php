@@ -10,7 +10,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && realpath((string)$_SERVER['SCRIPT_FILE
 
 
 if (!defined('PLUGIN_G4FREPORTS_VERSION')) {
-    define('PLUGIN_G4FREPORTS_VERSION', '1.8.25-rc1');
+    define('PLUGIN_G4FREPORTS_VERSION', '1.8.25-rc2');
 }
 if (!defined('PLUGIN_G4FREPORTS_MIN_GLPI')) {
     define('PLUGIN_G4FREPORTS_MIN_GLPI', '10.0.0');
