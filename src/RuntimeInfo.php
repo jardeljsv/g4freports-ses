@@ -5,7 +5,7 @@ namespace GlpiPlugin\G4freports;
 /** Local code information only: no connections, queries or configuration secrets. */
 final class RuntimeInfo
 {
-    public const BUILD_VERSION = '1.8.24';
+    public const BUILD_VERSION = '1.8.25-rc1';
     public const CONFIG_TEMPLATE = 'config_1824.html.twig';
 
     public static function collect(): array
