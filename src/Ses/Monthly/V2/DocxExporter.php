@@ -243,22 +243,22 @@ final class DocxExporter
         $rows = $review['candidates'] ?? [];
         $k = count($rows);
         if (!$k) return $xml . $this->p('Dos ' . OfficePackage::number($late) . ' chamados excedidos, não foram identificadas transferências comprovadas da entidade SES à Central de Serviços no histórico consultado.', '', false, 20);
-        if ($k > $late || $d <= $k) return $xml . $this->p('A simulação não possui base de cálculo válida; os resultados originais permanecem preservados.', '', false, 20);
-        $sim = 100 * $n / ($d - $k);
+        if ($k > $late || $d < $k) return $xml . $this->p('A simulação não possui base de cálculo válida; os resultados originais permanecem preservados.', '', false, 20);
+        $sim = $d > $k ? 100 * $n / ($d - $k) : null;
         $xml .= $this->p('Após reanálise dos registros, observou-se que ' . OfficePackage::number($k) . ' dos ' . OfficePackage::number($late)
-            . ' chamados considerados excedidos foram encaminhados da entidade SES à Central de Serviços. O intervalo anterior ao recebimento integra o período de resolução registrado. A parcela efetivamente consumida do prazo e a governabilidade sobre esse período devem ser avaliadas individualmente.', '', false, 20);
+            . ' chamados considerados excedidos foram encaminhados da entidade SES à Central de Serviços. A abertura registrada antecede o recebimento pela Central de Serviços. A parcela efetivamente consumida do prazo e a governabilidade sobre esse período devem ser avaliadas individualmente, considerando as pendências e eventuais transferências anteriores.', '', false, 20);
         $deduction = null;
         foreach ($s['financial']['deductions'] ?? [] as $item) if (($item['id'] ?? '') === $id) { $deduction = $item; break; }
         $amount = $deduction['amount'] ?? null;
-        $simRate = FinancialSummary::rate($id, $sim);
+        $simRate = $sim === null ? null : FinancialSummary::rate($id, $sim);
         $request = 'Diante disso, solicita-se à Fiscalização a reavaliação do ' . $id . ' quanto aos registros relacionados, considerando os períodos anteriores ao recebimento pela Central de Serviços.';
         if ($value < $target && $amount !== null && (float)$amount > 0) {
             $request .= $simRate === 0 ? ' Solicita-se a desconsideração da glosa de ' . $this->staffAmount($amount) . ', caso as exclusões sejam aceitas.'
                 : ' Solicita-se a revisão da glosa de ' . $this->staffAmount($amount) . ', conforme a faixa contratual resultante da análise.';
         }
         $xml .= $this->p($request, '', false, 20);
-        $xml .= $this->p('Caso sejam desconsiderados os ' . OfficePackage::number($k) . ' registros apontados, o resultado simulado do indicador será de '
-            . OfficePackage::percent($sim) . ' de atendimento dentro do prazo. A revisão e eventual alteração da glosa ficam condicionadas à análise e à manifestação favorável da Fiscalização.', '', false, 20);
+        $simulation = $sim === null ? 'não restará população aplicável ao indicador (N/A).' : 'o resultado simulado do indicador será de ' . OfficePackage::percent($sim) . ' de atendimento dentro do prazo.';
+        $xml .= $this->p('Caso sejam desconsiderados os ' . OfficePackage::number($k) . ' registros apontados, ' . $simulation . ' A revisão e eventual alteração da glosa ficam condicionadas à análise e à manifestação favorável da Fiscalização.', '', false, 20);
         $xml .= $this->p('Relação dos ' . OfficePackage::number($k) . ' chamados submetidos à reavaliação:', '', true, 20);
         $xml .= $this->p('Chamados nos quais houve transferência de entidade.', '', false, 20);
         foreach ($rows as $row) {
