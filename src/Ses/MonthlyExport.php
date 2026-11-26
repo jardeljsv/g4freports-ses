@@ -10,6 +10,7 @@ use GlpiPlugin\G4freports\Ses\Monthly\V1\XlsxExporter as MonthlyExcel;
 final class MonthlyExport
 {
     private const REVIEW_PROFILE = 'ses-monthly-v2';
+    private const REFINED_PROFILE = 'ses-monthly-v3';
     /** Stamp only newly generated data, before its draft/revision fingerprint. */
     public static function stamp(array $snapshot): array
     {
@@ -18,7 +19,7 @@ final class MonthlyExport
             self::profile($snapshot);
             return $snapshot;
         }
-        $snapshot['monthly_export'] = ['profile' => array_key_exists('severity_review', $snapshot) ? self::REVIEW_PROFILE : Profile::ID];
+        $snapshot['monthly_export'] = ['profile' => array_key_exists('severity_review', $snapshot) ? self::REFINED_PROFILE : Profile::ID];
         return $snapshot;
     }
 
@@ -33,8 +34,8 @@ final class MonthlyExport
         if (!array_key_exists('monthly_export', $snapshot)) return Profile::ID;
         $metadata = $snapshot['monthly_export'];
         if (!is_array($metadata) || array_keys($metadata) !== ['profile']
-            || !in_array($metadata['profile'] ?? null, [Profile::ID, self::REVIEW_PROFILE], true)
-            || ($metadata['profile'] === self::REVIEW_PROFILE && !is_array($snapshot['severity_review'] ?? null))) {
+            || !in_array($metadata['profile'] ?? null, [Profile::ID, self::REVIEW_PROFILE, self::REFINED_PROFILE], true)
+            || (in_array($metadata['profile'], [self::REVIEW_PROFILE, self::REFINED_PROFILE], true) && !is_array($snapshot['severity_review'] ?? null))) {
             throw new \RuntimeException('O formato mensal registrado nesta revisão não é compatível com esta instalação. Os dados JSON continuam disponíveis; nenhuma nova apuração foi realizada.', 409);
         }
         return $metadata['profile'];
@@ -50,7 +51,7 @@ final class MonthlyExport
         Profile::assertInstalled();
         // The fixed registry deliberately has no dynamic class/path lookup.
         $exporter = $format === 'docx'
-            ? ($profile === self::REVIEW_PROFILE ? new Monthly\V2\DocxExporter() : new MonthlyWord())
+            ? ($profile === self::REFINED_PROFILE ? new Monthly\V3\DocxExporter() : ($profile === self::REVIEW_PROFILE ? new Monthly\V2\DocxExporter() : new MonthlyWord()))
             : new MonthlyExcel();
         return [
             'binary' => $exporter->toBinary($snapshot),
